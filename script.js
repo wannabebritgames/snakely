@@ -1,126 +1,92 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-const grid = 30;
-const tiles = canvas.width / grid;
-
-let snake;
-let food;
-let powerup;
-
-let dx = 1;
-let dy = 0;
-
+let grid = 20;
+let snake, food, powerup;
+let dx, dy;
 let score = 0;
-let highscore = localStorage.getItem("snakeHighscore") || 0;
+let high = localStorage.getItem("high") || 0;
 
-document.getElementById("highscore").textContent = highscore;
-
-let speed = 120;
 let interval;
+let speed = 100;
 
-let shield = false;
-let doublePoints = false;
+const music = document.getElementById("music");
 
-function startGame() {
-
-    clearInterval(interval);
-
-    snake = [
-        {x:10,y:10},
-        {x:9,y:10},
-        {x:8,y:10}
-    ];
-
-    score = 0;
-    dx = 1;
-    dy = 0;
-
-    shield = false;
-    doublePoints = false;
-
-    food = randomPos();
-    powerup = randomPowerup();
-
-    speed = 120;
-
-    interval = setInterval(gameLoop, speed);
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 }
 
-function randomPos() {
-    return {
-        x: Math.floor(Math.random()*tiles),
-        y: Math.floor(Math.random()*tiles)
-    };
-}
+window.addEventListener("resize", resize);
+resize();
 
-function randomPowerup() {
-
-    const types = ["speed","shield","double"];
-
-    return {
-        ...randomPos(),
-        type: types[Math.floor(Math.random()*types.length)]
-    };
-}
-
-document.getElementById("startBtn").addEventListener("click", startGame);
-
-document.addEventListener("keydown",(e)=>{
-
-    if(e.key==="ArrowUp" && dy===0){
-        dx=0;dy=-1;
-    }
-
-    if(e.key==="ArrowDown" && dy===0){
-        dx=0;dy=1;
-    }
-
-    if(e.key==="ArrowLeft" && dx===0){
-        dx=-1;dy=0;
-    }
-
-    if(e.key==="ArrowRight" && dx===0){
-        dx=1;dy=0;
+/* STOP PAGE SCROLL */
+window.addEventListener("keydown", (e) => {
+    if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(e.key)) {
+        e.preventDefault();
     }
 });
 
-function gameLoop() {
+/* CONTROLS */
+document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowUp" && dy === 0) { dx = 0; dy = -1; }
+    if (e.key === "ArrowDown" && dy === 0) { dx = 0; dy = 1; }
+    if (e.key === "ArrowLeft" && dx === 0) { dx = -1; dy = 0; }
+    if (e.key === "ArrowRight" && dx === 0) { dx = 1; dy = 0; }
+});
 
+/* GAME SETUP */
+function startGame() {
+    snake = [{x:10,y:10}];
+    dx = 1;
+    dy = 0;
+    score = 0;
+
+    food = spawn();
+    powerup = spawnPower();
+
+    music.play();
+
+    clearInterval(interval);
+    interval = setInterval(loop, speed);
+}
+
+document.getElementById("start").onclick = startGame;
+
+function spawn() {
+    return {
+        x: Math.floor(Math.random() * (canvas.width / grid)),
+        y: Math.floor(Math.random() * (canvas.height / grid))
+    };
+}
+
+function spawnPower() {
+    const types = ["speed", "double"];
+    return {
+        ...spawn(),
+        type: types[Math.floor(Math.random() * types.length)]
+    };
+}
+
+/* GAME LOOP */
+function loop() {
     const head = {
         x: snake[0].x + dx,
         y: snake[0].y + dy
     };
 
-    if(
+    if (
         head.x < 0 ||
         head.y < 0 ||
-        head.x >= tiles ||
-        head.y >= tiles
-    ){
-
-        if(shield){
-            shield = false;
-            document.getElementById("status").textContent =
-                "Shield saved you!";
-            return;
-        }
-
+        head.x >= canvas.width / grid ||
+        head.y >= canvas.height / grid
+    ) {
         gameOver();
         return;
     }
 
-    for(let part of snake){
-
-        if(head.x===part.x && head.y===part.y){
-
-            if(shield){
-                shield=false;
-                document.getElementById("status").textContent =
-                    "Shield saved you!";
-                return;
-            }
-
+    for (let s of snake) {
+        if (head.x === s.x && head.y === s.y) {
             gameOver();
             return;
         }
@@ -128,147 +94,80 @@ function gameLoop() {
 
     snake.unshift(head);
 
-    if(head.x===food.x && head.y===food.y){
-
-        score += doublePoints ? 2 : 1;
-
-        food = randomPos();
-
+    if (head.x === food.x && head.y === food.y) {
+        score++;
+        food = spawn();
     } else {
-
         snake.pop();
     }
 
-    if(head.x===powerup.x && head.y===powerup.y){
+    if (head.x === powerup.x && head.y === powerup.y) {
+        if (powerup.type === "speed") {
+            speed = 50;
+            clearInterval(interval);
+            interval = setInterval(loop, speed);
+            setTimeout(() => {
+                speed = 100;
+                clearInterval(interval);
+                interval = setInterval(loop, speed);
+            }, 4000);
+        }
 
-        activatePower(powerup.type);
+        if (powerup.type === "double") {
+            score += 5;
+        }
 
-        powerup = randomPowerup();
+        powerup = spawnPower();
     }
 
     draw();
-
-    document.getElementById("score").textContent = score;
+    updateUI();
 }
 
-function activatePower(type){
+/* DRAW RETRO STYLE */
+function draw() {
+    ctx.fillStyle = "rgba(0,0,0,0.2)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
 
-    const status = document.getElementById("status");
+    const color = document.getElementById("color").value;
 
-    if(type==="speed"){
+    // FOOD GLOW
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = "red";
+    ctx.fillStyle = "red";
+    ctx.fillRect(food.x * grid, food.y * grid, grid-2, grid-2);
 
-        status.textContent = "⚡ Speed Boost";
+    // POWERUP
+    ctx.shadowColor = "yellow";
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(powerup.x * grid, powerup.y * grid, grid-2, grid-2);
 
-        clearInterval(interval);
+    // SNAKE
+    ctx.shadowColor = color;
 
-        interval = setInterval(gameLoop,70);
-
-        setTimeout(()=>{
-            clearInterval(interval);
-            interval=setInterval(gameLoop,120);
-        },5000);
-    }
-
-    if(type==="shield"){
-
-        shield = true;
-
-        status.textContent = "🛡 Shield Active";
-    }
-
-    if(type==="double"){
-
-        doublePoints = true;
-
-        status.textContent = "⭐ Double Points";
-
-        setTimeout(()=>{
-            doublePoints=false;
-        },8000);
-    }
-}
-
-function gameOver(){
-
-    if(score > highscore){
-
-        highscore = score;
-
-        localStorage.setItem(
-            "snakeHighscore",
-            highscore
-        );
-    }
-
-    document.getElementById("highscore").textContent =
-        highscore;
-
-    alert("Game Over! Score: " + score);
-
-    clearInterval(interval);
-}
-
-function draw(){
-
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    const color =
-        document.getElementById("snakeColor").value;
-
-    const pattern =
-        document.getElementById("snakePattern").value;
-
-    snake.forEach((part,index)=>{
-
+    for (let i = 0; i < snake.length; i++) {
         ctx.fillStyle = color;
+        ctx.fillRect(snake[i].x * grid, snake[i].y * grid, grid-2, grid-2);
+    }
 
-        ctx.fillRect(
-            part.x*grid,
-            part.y*grid,
-            grid-2,
-            grid-2
-        );
+    ctx.shadowBlur = 0;
+}
 
-        if(pattern==="striped"){
+/* UI */
+function updateUI() {
+    document.getElementById("scoreText").innerText = "Score: " + score;
 
-            ctx.fillStyle = "white";
+    if (score > high) {
+        high = score;
+        localStorage.setItem("high", high);
+    }
 
-            ctx.fillRect(
-                part.x*grid+8,
-                part.y*grid,
-                4,
-                grid-2
-            );
-        }
-    });
+    document.getElementById("highText").innerText = "High Score: " + high;
+}
 
-    ctx.fillStyle="red";
-
-    ctx.fillRect(
-        food.x*grid,
-        food.y*grid,
-        grid-2,
-        grid-2
-    );
-
-    if(powerup.type==="speed")
-        ctx.fillStyle="yellow";
-
-    if(powerup.type==="shield")
-        ctx.fillStyle="cyan";
-
-    if(powerup.type==="double")
-        ctx.fillStyle="gold";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        powerup.x*grid+grid/2,
-        powerup.y*grid+grid/2,
-        10,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
+/* GAME OVER */
+function gameOver() {
+    clearInterval(interval);
+    music.pause();
+    alert("GAME OVER - Score: " + score);
 }
