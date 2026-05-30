@@ -1,0 +1,42 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background: radial-gradient(circle, #0a0a0a, black);
+    font-family: "Press Start 2P", monospace;
+    color: lime;
+}
+
+canvas {
+    display: block;
+}
+
+#menu {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.92);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+h1 {
+    text-shadow: 0 0 15px lime;
+}
+
+button {
+    font-family: inherit;
+    padding: 15px;
+    margin-top: 20px;
+    cursor: pointer;
+    background: black;
+    color: lime;
+    border: 2px solid lime;
+}
+
+button:hover {
+    background: lime;
+    color: black;
+}
