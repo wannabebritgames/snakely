@@ -187,17 +187,31 @@ function checkFood(){
 function checkCollisions(){
 
     for(let s of snakes){
+
         if(s === player) continue;
 
         let d = Math.hypot(player.x - s.x, player.y - s.y);
 
-        if(d < 15){
-            gameOver();
-            return;
+        if(d < 12){
+
+            // ABSORB SYSTEM (bigger eats smaller)
+            if(player.length > s.length){
+
+                player.length += Math.floor(s.length * 0.5);
+                score += 5;
+
+                // respawn bot
+                s.x = Math.random()*world;
+                s.y = Math.random()*world;
+                s.length = 20;
+                s.body = [];
+            } else {
+                gameOver();
+                return;
+            }
         }
     }
 }
-
 /* =========================
    POWERUPS (simple working version)
 ========================= */
