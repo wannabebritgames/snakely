@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arcade Snake</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div id="menu">
+    <h1>ARCADE SNAKE</h1>
+
+    <p id="sub">INSERT COIN (press start)</p>
+
+    <div id="skinSelect">
+        <h3>SKIN</h3>
+        <select id="skin">
+            <option value="neon">Neon Core</option>
+            <option value="fire">Fire Mode</option>
+            <option value="ice">Ice Byte</option>
+            <option value="glitch">Glitch</option>
+        </select>
+    </div>
+
+    <button id="startBtn">START</button>
+
+    <p id="best">BEST: 0</p>
+</div>
+
+<canvas id="game"></canvas>
+
+<audio id="music" loop src="music.mp3"></audio>
+<audio id="eat" src="eat.wav"></audio>
+<audio id="death" src="death.wav"></audio>
+
+<script src="script.js"></script>
+</body>
+</html>
