@@ -27,6 +27,21 @@ document.addEventListener("DOMContentLoaded",()=>{
     let lb = document.getElementById("leaderboard");
     if(lb) lb.innerHTML = html;
 }
+        let settings = {
+    crt: true,
+    shake: true
+};
+
+document.getElementById("settingsBtn")?.addEventListener("click",()=>{
+
+    let panel = document.getElementById("settingsPanel");
+
+    if(panel){
+        panel.style.display =
+        panel.style.display === "block" ? "none" : "block";
+    }
+
+});
 
     });
 
