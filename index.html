@@ -1,40 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arcade Snake</title>
+<title>NEON ARCADE ENGINE</title>
 
 <link rel="stylesheet" href="style.css">
-
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
+<div id="crt"></div>
+
+<!-- MENU -->
 <div id="menu">
-    <h1>ARCADE SNAKE</h1>
+    <h1>NEON ARCADE</h1>
 
-    <p id="sub">INSERT COIN (press start)</p>
+    <p id="coins">COINS: 0</p>
 
-    <div id="skinSelect">
-        <h3>SKIN</h3>
-        <select id="skin">
-            <option value="neon">Neon Core</option>
-            <option value="fire">Fire Mode</option>
-            <option value="ice">Ice Byte</option>
-            <option value="glitch">Glitch</option>
-        </select>
-    </div>
-
+    <button id="insertCoin">INSERT COIN</button>
     <button id="startBtn">START</button>
 
+    <h3>SKINS</h3>
+    <select id="skinSelect">
+        <option value="neon">Neon Core (free)</option>
+        <option value="fire">Fire (unlock 10)</option>
+        <option value="ice">Ice (unlock 25)</option>
+        <option value="glitch">Glitch (unlock 50)</option>
+    </select>
+
+    <p id="achievements"></p>
+</div>
+
+<!-- GAME UI -->
+<div id="hud">
+    <p id="score">0</p>
     <p id="best">BEST: 0</p>
 </div>
 
 <canvas id="game"></canvas>
 
-<audio id="music" loop src="music.mp3"></audio>
+<!-- MOBILE JOYSTICK -->
+<div id="joystick">
+    <div id="up">⬆</div>
+    <div id="left">⬅</div>
+    <div id="right">➡</div>
+    <div id="down">⬇</div>
+</div>
+
+<!-- AUDIO -->
+<audio id="music" src="music.mp3" loop></audio>
 <audio id="eat" src="eat.wav"></audio>
 <audio id="death" src="death.wav"></audio>
 
