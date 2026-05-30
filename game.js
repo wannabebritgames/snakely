@@ -102,7 +102,7 @@ function updatePlayer(){
         mouseX - canvas.width/2
     );
 
-    player.angle += (targetAngle - player.angle) * 0.08;
+player.angle += (targetAngle - player.angle) * 0.06;
 
     player.speed = 3;
 
