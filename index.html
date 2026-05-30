@@ -6,32 +6,44 @@
 <title>SNAKELY</title>
 
 <link rel="stylesheet" href="style.css">
+
+<!-- better font -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
 <div id="menu">
+
     <h1>SNAKELY</h1>
 
-    <input id="nameInput" placeholder="Enter name (or random)">
-    <button id="randomName">Random Name</button>
+    <input id="nameInput" placeholder="username">
+
+    <button id="randomBtn">Random Name</button>
 
     <select id="skinSelect"></select>
-    <button id="shopBtn">SKIN SHOP</button>
 
     <button id="playBtn">PLAY</button>
+    <button id="shopBtn">SKIN SHOP</button>
+    <button id="settingsBtn">SETTINGS</button>
 
-    <div id="leaderboard"></div>
+    <div id="shop" class="panel hidden">
+        <h3>SKIN SHOP</h3>
+        <p>Unlock skins by scoring more points.</p>
+    </div>
+
+    <div id="settings" class="panel hidden">
+        <h3>SETTINGS</h3>
+        <label>
+            Show Grid
+            <input type="checkbox" id="gridToggle">
+        </label>
+    </div>
+
 </div>
 
 <canvas id="game"></canvas>
 
-<div id="joystick">
-    <div id="stick"></div>
-</div>
-
-<script src="entities.js"></script>
-<script src="ui.js"></script>
 <script src="game.js"></script>
 
 </body>
