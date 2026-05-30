@@ -1,13 +1,32 @@
 body {
     margin: 0;
     overflow: hidden;
-    background: radial-gradient(circle, #0a0a0a, black);
-    font-family: "Press Start 2P", monospace;
-    color: lime;
+    font-family: "Press Start 2P";
+    background: black;
+    color: #39ff14;
 }
 
 canvas {
     display: block;
+}
+
+#crt {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.03),
+        rgba(0,0,0,0.03) 2px
+    );
+    animation: flicker 0.12s infinite;
+}
+
+@keyframes flicker {
+    0% {opacity: 1;}
+    50% {opacity: 0.85;}
+    100% {opacity: 1;}
 }
 
 #menu {
@@ -19,24 +38,24 @@ canvas {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-align: center;
-}
-
-h1 {
-    text-shadow: 0 0 15px lime;
 }
 
 button {
-    font-family: inherit;
-    padding: 15px;
-    margin-top: 20px;
-    cursor: pointer;
+    margin: 5px;
+    padding: 10px;
+    border: 2px solid #39ff14;
     background: black;
-    color: lime;
-    border: 2px solid lime;
+    color: #39ff14;
+    cursor: pointer;
 }
 
 button:hover {
-    background: lime;
+    background: #39ff14;
     color: black;
+}
+
+#hud {
+    position: absolute;
+    top: 10px;
+    left: 10px;
 }
