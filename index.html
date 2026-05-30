@@ -1,49 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custom Snake</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Retro Snake Arcade</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>🐍 Custom Snake</h1>
+<div id="ui">
+    <h1>🐍 RETRO SNAKE</h1>
 
-<div id="menu">
-
-    <div class="customizer">
-        <h2>Character Customizer</h2>
-
-        <label>Color:</label>
-        <select id="snakeColor">
-            <option value="lime">Green</option>
-            <option value="cyan">Blue</option>
-            <option value="purple">Purple</option>
-            <option value="red">Red</option>
-            <option value="gold">Gold</option>
+    <div id="menu">
+        <label>Snake Color</label>
+        <select id="color">
+            <option value="#39ff14">Neon Green</option>
+            <option value="#00f0ff">Cyan</option>
+            <option value="#ff3df2">Pink</option>
+            <option value="#ffae00">Orange</option>
         </select>
 
-        <label>Pattern:</label>
-        <select id="snakePattern">
-            <option value="solid">Solid</option>
-            <option value="striped">Striped</option>
-        </select>
+        <button id="start">START GAME</button>
 
-        <button id="startBtn">Start Game</button>
+        <p id="scoreText">Score: 0</p>
+        <p id="highText">High Score: 0</p>
     </div>
-
-    <div class="stats">
-        <p>Score: <span id="score">0</span></p>
-        <p>High Score: <span id="highscore">0</span></p>
-        <p id="status"></p>
-    </div>
-
 </div>
 
-<canvas id="game" width="600" height="600"></canvas>
+<canvas id="game"></canvas>
+
+<audio id="music" loop>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
 
 <script src="script.js"></script>
-
 </body>
 </html>
