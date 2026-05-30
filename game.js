@@ -3,7 +3,7 @@ const ctx = canvas.getContext("2d");
 
 let state = "menu";
 
-let player;
+let player = null;
 let snakes = [];
 let foods = [];
 let powerups = [];
@@ -33,11 +33,18 @@ document.addEventListener("mousemove",(e)=>{
     mouseY = e.clientY;
 });
 
-/* START */
-window.startGame = function(){
+/* =========================
+   START GAME (ENTRY POINT)
+========================= */
+window.startGame = function () {
+
+    console.log("START GAME TRIGGERED");
 
     state = "play";
+
     document.getElementById("menu").style.display = "none";
+
+    score = 0;
 
     player = new Snake(world/2, world/2, "#00ffcc", true);
 
@@ -55,24 +62,40 @@ window.startGame = function(){
     /* food */
     foods = [];
     for(let i=0;i<200;i++){
-        foods.push({x:Math.random()*world,y:Math.random()*world});
+        foods.push({
+            x:Math.random()*world,
+            y:Math.random()*world
+        });
     }
 
-    /* powerups */
     powerups = [];
 
-    loop();
+    requestAnimationFrame(loop);
 };
 
-/* SLITHER MOVEMENT (FIXED) */
+/* =========================
+   SAFETY CHECK
+========================= */
+function ensurePlayer(){
+    if(!player){
+        console.warn("Player not initialized yet");
+        return false;
+    }
+    return true;
+}
+
+/* =========================
+   SLITHER MOVEMENT
+========================= */
 function updatePlayer(){
+
+    if(!ensurePlayer()) return;
 
     let targetAngle = Math.atan2(
         mouseY - canvas.height/2,
         mouseX - canvas.width/2
     );
 
-    /* smooth turning */
     player.angle += (targetAngle - player.angle) * 0.08;
 
     player.speed = 3;
@@ -87,26 +110,30 @@ function updatePlayer(){
     }
 }
 
-/* BOT AI */
+/* =========================
+   BOT AI
+========================= */
 function updateBots(){
 
     snakes.forEach(s=>{
         if(s.isPlayer) return;
 
-        let randomTurn = (Math.random()-0.5)*0.2;
-        s.angle += randomTurn;
+        s.angle += (Math.random()-0.5)*0.2;
 
         s.x += Math.cos(s.angle)*2;
         s.y += Math.sin(s.angle)*2;
 
         s.body.push({x:s.x,y:s.y});
+
         if(s.body.length > s.length){
             s.body.shift();
         }
     });
 }
 
-/* FOOD */
+/* =========================
+   FOOD
+========================= */
 function checkFood(){
 
     foods.forEach((f,i)=>{
@@ -120,26 +147,34 @@ function checkFood(){
             localStorage.coins = coins;
 
             foods.splice(i,1);
-            foods.push({x:Math.random()*world,y:Math.random()*world});
+            foods.push({
+                x:Math.random()*world,
+                y:Math.random()*world
+            });
         }
     });
 }
 
-/* COLLISIONS (bots) */
+/* =========================
+   COLLISIONS
+========================= */
 function checkCollisions(){
 
-    snakes.forEach(s=>{
-        if(s === player) return;
+    for(let s of snakes){
+        if(s === player) continue;
 
         let d = Math.hypot(player.x - s.x, player.y - s.y);
 
         if(d < 15){
             gameOver();
+            return;
         }
-    });
+    }
 }
 
-/* POWERUPS */
+/* =========================
+   POWERUPS (simple working version)
+========================= */
 function spawnPowerups(){
     if(Math.random() < 0.01){
         powerups.push({
@@ -151,20 +186,23 @@ function spawnPowerups(){
 }
 
 function checkPowerups(){
+
     powerups.forEach((p,i)=>{
         let d = Math.hypot(player.x-p.x, player.y-p.y);
 
         if(d < 20){
-            if(p.type==="speed"){
+            if(p.type === "speed"){
                 player.speed = 6;
-                setTimeout(()=>player.speed=3,3000);
+                setTimeout(()=>player.speed=3, 2500);
             }
             powerups.splice(i,1);
         }
     });
 }
 
-/* DRAW */
+/* =========================
+   DRAW
+========================= */
 function draw(){
 
     ctx.fillStyle="#05070a";
@@ -198,25 +236,26 @@ function draw(){
 
     ctx.restore();
 
-    /* HUD */
     ctx.fillStyle="white";
     ctx.fillText("Score: " + score, 20, 20);
     ctx.fillText("Coins: " + coins, 20, 40);
 }
 
-/* GAME OVER */
+/* =========================
+   GAME OVER
+========================= */
 function gameOver(){
 
     shake = 15;
 
-    let interval = setInterval(()=>{
+    let t = setInterval(()=>{
         canvas.style.transform =
         `translate(${Math.random()*10-5}px,${Math.random()*10-5}px)`;
 
         shake--;
-        if(shake<=0){
-            clearInterval(interval);
-            canvas.style.transform="translate(0,0)";
+        if(shake <= 0){
+            clearInterval(t);
+            canvas.style.transform = "translate(0,0)";
         }
     },30);
 
@@ -227,10 +266,14 @@ function gameOver(){
     document.getElementById("menu").style.display = "flex";
 }
 
-/* LOOP */
+/* =========================
+   MAIN LOOP (SAFE)
+========================= */
 function loop(){
 
     if(state !== "play") return;
+
+    if(!player) return;
 
     updatePlayer();
     updateBots();
