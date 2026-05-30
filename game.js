@@ -328,6 +328,7 @@ function loop(){
     const BOT_NAMES = [
     "Vex","Nova","Byte","Orbit","Neo","Glitch","Pixel",
     "Rex","Astra","Drift","Zyn","Ion","Zero","Nexus"
+        updateLeaderboard(snakes);
 ];
 
 function getBotName(){
