@@ -51,14 +51,20 @@ window.startGame = function () {
     snakes = [player];
 
     /* bots */
-    for(let i=0;i<10;i++){
-        snakes.push(new Snake(
-            Math.random()*world,
-            Math.random()*world,
-            "#ff3df2"
-        ));
-    }
+for(let i=0;i<12;i++){
 
+    let bot = new Snake(
+        Math.random()*world,
+        Math.random()*world,
+        "#ff3df2",
+        false
+    );
+
+    bot.name = getBotName();
+    bot.isBot = true;
+
+    snakes.push(bot);
+}
     /* food */
     foods = [];
     for(let i=0;i<200;i++){
@@ -118,7 +124,28 @@ function updateBots(){
     snakes.forEach(s=>{
         if(s.isPlayer) return;
 
-        s.angle += (Math.random()-0.5)*0.2;
+        // simple food chasing
+        let closest = null;
+        let dist = Infinity;
+
+        foods.forEach(f=>{
+            let d = Math.hypot(s.x-f.x, s.y-f.y);
+            if(d < dist){
+                dist = d;
+                closest = f;
+            }
+        });
+
+        if(closest){
+            let targetAngle = Math.atan2(
+                closest.y - s.y,
+                closest.x - s.x
+            );
+
+            s.angle += (targetAngle - s.angle) * 0.03;
+        } else {
+            s.angle += (Math.random()-0.5)*0.2;
+        }
 
         s.x += Math.cos(s.angle)*2;
         s.y += Math.sin(s.angle)*2;
@@ -130,7 +157,6 @@ function updateBots(){
         }
     });
 }
-
 /* =========================
    FOOD
 ========================= */
@@ -227,19 +253,19 @@ function draw(){
     });
 
     /* snakes */
-    snakes.forEach(s=>{
-        ctx.fillStyle=s.color;
-        s.body.forEach(p=>{
-            ctx.fillRect(p.x,p.y,6,6);
-        });
+snakes.forEach(s=>{
+    ctx.fillStyle=s.color;
+
+    s.body.forEach(p=>{
+        ctx.fillRect(p.x,p.y,6,6);
     });
 
-    ctx.restore();
-
-    ctx.fillStyle="white";
-    ctx.fillText("Score: " + score, 20, 20);
-    ctx.fillText("Coins: " + coins, 20, 40);
-}
+    // draw name (bots only)
+    if(!s.isPlayer){
+        ctx.fillStyle="white";
+        ctx.fillText(s.name || "BOT", s.x, s.y - 10);
+    }
+});
 
 /* =========================
    GAME OVER
@@ -285,4 +311,12 @@ function loop(){
     draw();
 
     requestAnimationFrame(loop);
+    const BOT_NAMES = [
+    "Vex","Nova","Byte","Orbit","Neo","Glitch","Pixel",
+    "Rex","Astra","Drift","Zyn","Ion","Zero","Nexus"
+];
+
+function getBotName(){
+    return BOT_NAMES[Math.floor(Math.random()*BOT_NAMES.length)] +
+    Math.floor(Math.random()*99);
 }
