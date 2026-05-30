@@ -3,15 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>SNAKELY V1</title>
 
 <link rel="stylesheet" href="style.css">
+
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-<!-- MENU -->
+<!-- =========================
+     MAIN MENU
+========================= -->
 <div id="menu">
     <h1>SNAKELY V1</h1>
 
@@ -19,18 +23,34 @@
 
     <button id="playBtn">PLAY</button>
 
+    <button id="settingsBtn">SETTINGS</button>
+
     <p id="bestText">BEST: 0</p>
 </div>
 
-<!-- UI LAYER (FOR FUTURE LEADERBOARD / SHOP / SETTINGS) -->
-<div id="ui"></div>
+<!-- =========================
+     GAME UI OVERLAY
+========================= -->
+<div id="ui">
 
-<!-- CRT EFFECT LAYER -->
+    <div id="leaderboard"></div>
+
+    <div id="settingsPanel" style="display:none;">
+        <h3>SETTINGS</h3>
+        <p>(toggle logic handled in ui.js)</p>
+    </div>
+
+</div>
+
+<!-- CRT OVERLAY -->
 <div id="crt"></div>
 
-<!-- GAME -->
+<!-- GAME CANVAS -->
 <canvas id="game"></canvas>
 
+<!-- =========================
+     SCRIPTS
+========================= -->
 <script src="entities.js"></script>
 <script src="game.js"></script>
 <script src="ui.js"></script>
