@@ -26,5 +26,14 @@ class Food {
     constructor(x,y){
         this.x = x;
         this.y = y;
+        const BOT_NAMES = [
+    "Vex", "Nova", "Byte", "Orbit", "Zyn", "Pixel", "Glitch",
+    "Nexus", "Astra", "Zero", "Neo", "Drift", "Rex", "Ion"
+];
+
+function randomBotName(){
+    return BOT_NAMES[Math.floor(Math.random()*BOT_NAMES.length)] +
+    Math.floor(Math.random()*99);
+}
     }
 }
