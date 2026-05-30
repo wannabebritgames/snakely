@@ -5,13 +5,15 @@ let state = "menu";
 
 let player;
 let foods = [];
-let snakes = [];
+let bots = [];
 
 let world = 3000;
 
-let keys = {};
+let mouseX = 0;
+let mouseY = 0;
 
 let score = 0;
+let best = Number(localStorage.best || 0);
 
 /* resize */
 function resize(){
@@ -21,87 +23,64 @@ function resize(){
 window.addEventListener("resize", resize);
 resize();
 
-/* INPUT */
-document.addEventListener("keydown",(e)=>{
-    keys[e.key] = true;
+/* mouse */
+document.addEventListener("mousemove",(e)=>{
+    mouseX = e.clientX;
+    mouseY = e.clientY;
 });
-
-document.addEventListener("keyup",(e)=>{
-    keys[e.key] = false;
-});
-
-/* RANDOM NAME */
-function randomName(){
-    const names = ["Nova","Byte","Vex","Orbit","Neo","Pixel"];
-    return names[Math.floor(Math.random()*names.length)] +
-    Math.floor(Math.random()*999);
-}
-
-/* UI */
-document.getElementById("randomBtn").onclick = ()=>{
-    document.getElementById("nameInput").value = randomName();
-};
-
-document.getElementById("shopBtn").onclick = ()=>{
-    document.getElementById("shop").classList.toggle("hidden");
-};
-
-document.getElementById("settingsBtn").onclick = ()=>{
-    document.getElementById("settings").classList.toggle("hidden");
-};
 
 /* START GAME */
-document.getElementById("playBtn").onclick = startGame;
-
-function startGame(){
+window.startGame = function () {
 
     state = "play";
 
     document.getElementById("menu").style.display = "none";
 
-    player = {
-        x: world/2,
-        y: world/2,
-        angle: 0,
-        speed: 3,
-        body: [],
-        length: 20
-    };
+    player = new Snake(
+        world/2,
+        world/2,
+        "#00ffcc",
+        true
+    );
 
     foods = [];
+    bots = [];
 
     for(let i=0;i<200;i++){
-        foods.push({
-            x: Math.random()*world,
-            y: Math.random()*world
-        });
+        foods.push(new Food(
+            Math.random()*world,
+            Math.random()*world
+        ));
+    }
+
+    for(let i=0;i<8;i++){
+        bots.push(new Snake(
+            Math.random()*world,
+            Math.random()*world,
+            "#ff3df2"
+        ));
     }
 
     loop();
+};
+
+/* BOT AI */
+function updateBots(){
+    bots.forEach(b=>{
+        b.angle += (Math.random()-0.5)*0.2;
+        b.move();
+    });
 }
 
-/* MOVE */
+/* PLAYER CONTROL (slither style) */
 function updatePlayer(){
 
-    if(keys["ArrowUp"]) player.speed = 4;
-    else player.speed = 3;
+    let dx = mouseX - canvas.width/2;
+    let dy = mouseY - canvas.height/2;
 
-    let mx = canvas.width/2;
-    let my = canvas.height/2;
+    player.angle = Math.atan2(dy,dx);
 
-    let dx = (mx - canvas.width/2);
-    let dy = (my - canvas.height/2);
-
-    player.angle = Math.atan2(dy+1, dx+1);
-
-    player.x += Math.cos(player.angle)*player.speed;
-    player.y += Math.sin(player.angle)*player.speed;
-
-    player.body.push({x:player.x,y:player.y});
-
-    if(player.body.length > player.length){
-        player.body.shift();
-    }
+    player.move();
 }
 
 /* FOOD */
@@ -113,7 +92,11 @@ function checkFood(){
             player.length += 3;
             score++;
             foods.splice(i,1);
-            foods.push({x:Math.random()*world,y:Math.random()*world});
+
+            foods.push(new Food(
+                Math.random()*world,
+                Math.random()*world
+            ));
         }
     });
 }
@@ -133,14 +116,21 @@ function draw(){
     /* food */
     ctx.fillStyle="yellow";
     foods.forEach(f=>{
-        ctx.fillRect(f.x,f.y,6,6);
+        ctx.fillRect(f.x,f.y,5,5);
+    });
+
+    /* bots */
+    bots.forEach(b=>{
+        ctx.fillStyle=b.color;
+        b.body.forEach(p=>{
+            ctx.fillRect(p.x,p.y,6,6);
+        });
     });
 
     /* player */
-    ctx.fillStyle="#00ffcc";
-
+    ctx.fillStyle=player.color;
     player.body.forEach(p=>{
-        ctx.fillRect(p.x,p.y,8,8);
+        ctx.fillRect(p.x,p.y,6,6);
     });
 
     ctx.restore();
@@ -155,7 +145,9 @@ function loop(){
     if(state !== "play") return;
 
     updatePlayer();
+    updateBots();
     checkFood();
+
     draw();
 
     requestAnimationFrame(loop);
