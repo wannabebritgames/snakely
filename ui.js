@@ -11,6 +11,22 @@ document.addEventListener("DOMContentLoaded",()=>{
         } else {
             console.error("startGame missing");
         }
+        function updateLeaderboard(snakes){
+
+    let sorted = [...snakes].sort((a,b)=>b.length - a.length);
+
+    let html = "<h3>LEADERBOARD</h3>";
+
+    sorted.slice(0,8).forEach((s,i)=>{
+        html += `<div>
+            ${i+1}. ${s.isPlayer ? "YOU" : s.name || "BOT"}
+            - ${s.length}
+        </div>`;
+    });
+
+    let lb = document.getElementById("leaderboard");
+    if(lb) lb.innerHTML = html;
+}
 
     });
 
