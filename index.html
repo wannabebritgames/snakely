@@ -1,1 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Snake</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+<h1>🐍 Custom Snake</h1>
+
+<div id="menu">
+
+    <div class="customizer">
+        <h2>Character Customizer</h2>
+
+        <label>Color:</label>
+        <select id="snakeColor">
+            <option value="lime">Green</option>
+            <option value="cyan">Blue</option>
+            <option value="purple">Purple</option>
+            <option value="red">Red</option>
+            <option value="gold">Gold</option>
+        </select>
+
+        <label>Pattern:</label>
+        <select id="snakePattern">
+            <option value="solid">Solid</option>
+            <option value="striped">Striped</option>
+        </select>
+
+        <button id="startBtn">Start Game</button>
+    </div>
+
+    <div class="stats">
+        <p>Score: <span id="score">0</span></p>
+        <p>High Score: <span id="highscore">0</span></p>
+        <p id="status"></p>
+    </div>
+
+</div>
+
+<canvas id="game" width="600" height="600"></canvas>
+
+<script src="script.js"></script>
+
+</body>
+</html>
